@@ -38,8 +38,3 @@ variable "github_repository" {
   description = "URL of the GitHub repository to deploy"
   type        = string
 }
-
-variable "cloudflare_api_token" {
-  description = "API token for Cloudflare authentication"
-  type        = string
-}
