@@ -1,0 +1,14 @@
+name: 'Template'
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+jobs:
