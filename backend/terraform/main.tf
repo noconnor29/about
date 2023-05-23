@@ -119,3 +119,5 @@ resource "azurerm_cosmosdb_sql_container" "container" {
 output "endpoint" {
   value = azurerm_cosmosdb_account.cdb.document_endpoint
 }
+
+# ghost edit
