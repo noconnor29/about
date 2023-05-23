@@ -31,14 +31,15 @@ resource "azurerm_resource_group" "rg" {
 
 # Create Azure Static Web App
 resource "azurerm_static_site" "static_site" {
-  name                = "site_about_noconnor_io"
+  name                = "site-about-noconnor-io"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  repository_url      = var.github_repository
-  # need to configure secrets in GH/TFC
-  app_settings = {
-    "GITHUB_TOKEN" = ""
-  }
+  
+  #repository_url      = var.github_repository
+  ## need to configure secrets in GH/TFC
+  #app_settings = {
+  #  "GITHUB_TOKEN" = ""
+  #}
 }
 
 # Create a DNS record for the site
@@ -48,7 +49,7 @@ resource "cloudflare_record" "dns_about_noconnor_io" {
   proxied  = false
   ttl      = var.ttl
   type     = "CNAME"
-  value    = azurerm_static_site.static_site.default_hostname
+  value    = azurerm_static_site.static_site.default_host_name
   #value    = "ambitious-stone-01b1b0c0f.3.azurestaticapps.net"
   zone_id    = "695e898dffb5370b3e32e67bb903272e"
   depends_on = [azurerm_static_site.static_site]
@@ -62,7 +63,7 @@ resource "azurerm_static_site_custom_domain" "example" {
 
 # Output the static site endpoint
 output "static_site_endpoint" {
-  value = azurerm_static_site.static_site.default_hostname
+  value = azurerm_static_site.static_site.default_host_name
 }
 
 # Create CosmosDB to track site visits
@@ -72,19 +73,34 @@ resource "azurerm_cosmosdb_account" "cdb" {
   resource_group_name = "rg-resume-dev"
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
-
+  backup {
+    type                         = "Periodic"
+    interval_in_minutes          = 1440
+    retention_in_hours           = 48
+    storage_redundancy           = "Zone"
+  }
+  geo_location {
+    location          = "eastus2"
+    failover_priority = 0
+    zone_redundant = true
+  }
+  consistency_policy {
+    consistency_level = "Eventual"
+  }
   enable_automatic_failover           = true
   enable_multiple_write_locations     = true
   is_virtual_network_filter_enabled   = false
-  enable_automatic_backup             = true
-  backup_interval_in_minutes          = 1440
-  backup_retention_in_hours           = 48
-  enable_zone_redundant_storage       = true
-  enable_public_network_access        = true
-  enable_virtual_network_integration = false
+  public_network_access_enabled       = true
 
   capabilities {
     name = "EnableServerless"
+  }
+  cors_rule {
+    allowed_origins     = ["https://example.com"]
+    allowed_methods    = ["GET", "POST"]
+    allowed_headers    = ["*"]
+    exposed_headers    = ["*"]
+    max_age_in_seconds = 86400
   }
 }
 
@@ -101,23 +117,10 @@ resource "azurerm_cosmosdb_sql_container" "container" {
   database_name       = azurerm_cosmosdb_sql_database.db.name
   partition_key_path  = "/id"
   throughput          = 400
-
-  default_ttl { # documents do not expire
-    seconds = -1
-  }
-
-  cors_rule {
-    allowed_origins     = ["https://example.com"]
-    allowed_methods    = ["GET", "POST"]
-    allowed_headers    = ["*"]
-    exposed_headers    = ["*"]
-    max_age_in_seconds = 86400
-  }
+  default_ttl         = -1
 }
 
 # Output the endpoint URL of the CDB
 output "endpoint" {
-  value = azurerm_cosmosdb_account.cdb.document_endpoint
+  value = azurerm_cosmosdb_account.cdb.endpoint
 }
-
-# ghost edit
