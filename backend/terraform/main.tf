@@ -13,19 +13,12 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
+    azurerm = {}
+    azapi = {
+      source  = "azure/azapi"
+      version = "~> 1.0"
+    }
   }
-}
-
-provider "azurerm" {
-  features {}
-}
-
-provider "azapi" {
-  source  = "azure/azapi"
-  version = "~> 1.0"
-}
-
-provider "cloudflare" {
 }
 
 ## Create resources
