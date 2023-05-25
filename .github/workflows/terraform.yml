@@ -21,6 +21,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ./backend/terraform
 
     steps:
     # Checkout the repository to the GitHub Actions runner
