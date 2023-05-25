@@ -7,6 +7,7 @@ terraform {
       name = "cloud-resume"
     }
   }
+
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
@@ -17,6 +18,11 @@ terraform {
 
 provider "azurerm" {
   features {}
+}
+
+provider "azapi" {
+  source  = "azure/azapi"
+  version = "~> 1.0"
 }
 
 provider "cloudflare" {
@@ -34,23 +40,37 @@ resource "azurerm_static_site" "static_site" {
   name                = "site-about-noconnor-io"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  
-  #repository_url      = var.github_repository
-  ## need to configure secrets in GH/TFC
-  #app_settings = {
-  #  "GITHUB_TOKEN" = ""
-  #}
+  sku_tier            = "Free"
+  sku_size            = "Free"
+
+  #staging_environment_policy = "Enabled"
+  #allow_config_file_updates  = true
+  #provider                   = "GitHub"
+  #enterprise_grade_cdn_status = "Disabled"
+}
+
+resource "azapi_update_resource" "configure_static_site" {
+  type        = "Microsoft.Web/staticSites@2022-03-01"
+  resource_id = azurerm_static_site.static_site.id
+  body = jsonencode({
+    properties = {
+      customDomains = [
+        "${var.subdomain}.${var.domain}"
+      ]
+      repositoryUrl = "https://github.com/noconnor29/resume"
+      branch        = "main"
+    }
+  })
 }
 
 # Create a DNS record for the site
 resource "cloudflare_record" "dns_about_noconnor_io" {
-  name     = var.subdomain
-  priority = 10
-  proxied  = false
-  ttl      = var.ttl
-  type     = "CNAME"
-  value    = azurerm_static_site.static_site.default_host_name
-  #value    = "ambitious-stone-01b1b0c0f.3.azurestaticapps.net"
+  name       = var.subdomain
+  priority   = 10
+  proxied    = false
+  ttl        = var.ttl
+  type       = "CNAME"
+  value      = azurerm_static_site.static_site.default_host_name
   zone_id    = "695e898dffb5370b3e32e67bb903272e"
   depends_on = [azurerm_static_site.static_site]
 }
@@ -74,29 +94,29 @@ resource "azurerm_cosmosdb_account" "cdb" {
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
   backup {
-    type                         = "Periodic"
-    interval_in_minutes          = 1440
-    retention_in_hours           = 48
-    storage_redundancy           = "Zone"
+    type                = "Periodic"
+    interval_in_minutes = 1440
+    retention_in_hours  = 48
+    storage_redundancy  = "Zone"
   }
   geo_location {
     location          = "eastus2"
     failover_priority = 0
-    zone_redundant = true
+    zone_redundant    = true
   }
   consistency_policy {
     consistency_level = "Eventual"
   }
-  enable_automatic_failover           = true
-  enable_multiple_write_locations     = true
-  is_virtual_network_filter_enabled   = false
-  public_network_access_enabled       = true
+  enable_automatic_failover         = true
+  enable_multiple_write_locations   = true
+  is_virtual_network_filter_enabled = false
+  public_network_access_enabled     = true
 
   capabilities {
     name = "EnableServerless"
   }
   cors_rule {
-    allowed_origins     = ["https://example.com"]
+    allowed_origins    = ["https://example.com"]
     allowed_methods    = ["GET", "POST"]
     allowed_headers    = ["*"]
     exposed_headers    = ["*"]
