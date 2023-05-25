@@ -13,12 +13,25 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
-    azurerm = {}
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 2.0"
+    }
     azapi = {
       source  = "azure/azapi"
       version = "~> 1.0"
     }
   }
+}
+
+provider "cloudflare" {
+}
+
+provider "azurerm" {
+  features {}
+}
+
+provider "azapi" {
 }
 
 ## Create resources
@@ -50,7 +63,7 @@ resource "azapi_update_resource" "configure_static_site" {
       customDomains = [
         "${var.subdomain}.${var.domain}"
       ]
-      repositoryUrl = "https://github.com/noconnor29/resume"
+      repositoryUrl = "$(var.github_repository)"
       branch        = "main"
     }
   })
