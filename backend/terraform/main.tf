@@ -25,13 +25,28 @@ terraform {
 }
 
 provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
 
 provider "azurerm" {
   features {}
+  # https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash
+  subscription_id = var.azure_subscription_id
+  tenant_id       = var.azure_subscription_tenant_id
+  client_id       = var.service_principal_appid
+  client_secret   = var.service_principal_password
 }
 
 provider "azapi" {
+  subscription_id = var.azure_subscription_id
+  tenant_id       = var.azure_subscription_tenant_id
+  client_id       = var.service_principal_appid
+  client_secret   = var.service_principal_password
+}
+
+provider "github" {
+  token = var.github_token
+  owner = var.github_owner
 }
 
 ## Create resources
@@ -63,7 +78,7 @@ resource "azapi_update_resource" "configure_static_site" {
       customDomains = [
         "${var.subdomain}.${var.domain}"
       ]
-      repositoryUrl = "$(var.github_repository)"
+      repositoryUrl = var.github_repository
       branch        = "main"
     }
   })
@@ -81,7 +96,7 @@ resource "cloudflare_record" "dns_about_noconnor_io" {
   depends_on = [azurerm_static_site.static_site]
 }
 
-resource "azurerm_static_site_custom_domain" "example" {
+resource "azurerm_static_site_custom_domain" "about" {
   static_site_id  = azurerm_static_site.static_site.id
   domain_name     = "${var.subdomain}.${var.domain}"
   validation_type = "cname-delegation"
@@ -95,7 +110,7 @@ output "static_site_endpoint" {
 # Create CosmosDB to track site visits
 resource "azurerm_cosmosdb_account" "cdb" {
   name                = "cdb-resume-dev"
-  location            = "eastus2"
+  location            = azurerm_resource_group.rg.location
   resource_group_name = "rg-resume-dev"
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
@@ -106,7 +121,7 @@ resource "azurerm_cosmosdb_account" "cdb" {
     storage_redundancy  = "Zone"
   }
   geo_location {
-    location          = "eastus2"
+    location          = azurerm_resource_group.rg.location
     failover_priority = 0
     zone_redundant    = true
   }
@@ -114,7 +129,7 @@ resource "azurerm_cosmosdb_account" "cdb" {
     consistency_level = "Eventual"
   }
   enable_automatic_failover         = true
-  enable_multiple_write_locations   = true
+  enable_multiple_write_locations   = false
   is_virtual_network_filter_enabled = false
   public_network_access_enabled     = true
 
@@ -122,7 +137,7 @@ resource "azurerm_cosmosdb_account" "cdb" {
     name = "EnableServerless"
   }
   cors_rule {
-    allowed_origins    = ["https://example.com"]
+    allowed_origins    = ["https://about.noconnor.io"]
     allowed_methods    = ["GET", "POST"]
     allowed_headers    = ["*"]
     exposed_headers    = ["*"]
@@ -142,8 +157,8 @@ resource "azurerm_cosmosdb_sql_container" "container" {
   account_name        = azurerm_cosmosdb_account.cdb.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
   partition_key_path  = "/id"
-  throughput          = 400
-  default_ttl         = -1
+  #throughput          = 400
+  default_ttl = -1
 }
 
 # Output the endpoint URL of the CDB

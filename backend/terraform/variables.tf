@@ -30,7 +30,7 @@ variable "resource_group_name" {
 
 variable "az_region" {
   description = "Azure region where resources will be deployed"
-  default     = "eastus2"
+  default     = "westus2" #eastus2
   type        = string
 }
 
@@ -44,3 +44,30 @@ variable "cloudflare_api_token" {
   type        = string
   sensitive   = true
 }
+
+variable "azure_subscription_id" {
+  description = "Azure Subscription ID"
+  type        = string
+  sensitive   = false
+}
+
+variable "azure_subscription_tenant_id" {
+  description = "Azure Subscription Tenant ID"
+  type        = string
+  sensitive   = false
+}
+
+variable "service_principal_appid" {
+  description = "Service Principal AppID"
+  type        = string
+  sensitive   = false
+}
+
+variable "service_principal_password" {
+  description = "Service Principal Password"
+  type        = string
+  sensitive   = true
+}
+
+#variable "github_token" {}
+#variable "github_owner" {}
