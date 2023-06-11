@@ -34,10 +34,15 @@ variable "az_region" {
   type        = string
 }
 
-variable "github_repository" {
+variable "github_repo_url" {
   description = "URL of the GitHub repository to deploy"
   type        = string
 }
+
+# variable "github_repo_name" {
+#   description = "Name of the GitHub repository to deploy"
+#   type        = string
+# }
 
 variable "cloudflare_api_token" {
   description = "API token for Cloudflare authentication"

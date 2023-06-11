@@ -46,7 +46,6 @@ provider "azapi" {
 
 provider "github" {
   token = var.github_token
-  owner = var.github_owner
 }
 
 ## Create resources
@@ -64,6 +63,11 @@ resource "azurerm_static_site" "static_site" {
   sku_tier            = "Free"
   sku_size            = "Free"
 
+  #identity {
+  #  type = SystemAssigned
+  #  identity_ids = [ var.service_principal_appid ]
+  #}
+
   #staging_environment_policy = "Enabled"
   #allow_config_file_updates  = true
   #provider                   = "GitHub"
@@ -75,13 +79,25 @@ resource "azapi_update_resource" "configure_static_site" {
   resource_id = azurerm_static_site.static_site.id
   body = jsonencode({
     properties = {
+      branch = "main"
+      buildProperties = {
+        #apiLocation = "/backend/api"
+        appLocation                        = "/frontend"
+        githubActionSecretNameOverride     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
+        skipGithubActionWorkflowGeneration = true
+      }
       customDomains = [
         "${var.subdomain}.${var.domain}"
       ]
-      repositoryUrl = var.github_repository
-      branch        = "main"
+      repositoryUrl = var.github_repo_url
     }
   })
+}
+
+resource "github_actions_secret" "static_site_token" {
+  repository      = var.github_repo_name
+  secret_name     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
+  encrypted_value = azurerm_static_site.static_site.api_key
 }
 
 # Create a DNS record for the site
@@ -100,6 +116,7 @@ resource "azurerm_static_site_custom_domain" "about" {
   static_site_id  = azurerm_static_site.static_site.id
   domain_name     = "${var.subdomain}.${var.domain}"
   validation_type = "cname-delegation"
+  depends_on      = [cloudflare_record.dns_about_noconnor_io]
 }
 
 # Output the static site endpoint
@@ -136,13 +153,13 @@ resource "azurerm_cosmosdb_account" "cdb" {
   capabilities {
     name = "EnableServerless"
   }
-  cors_rule {
-    allowed_origins    = ["https://about.noconnor.io"]
-    allowed_methods    = ["GET", "POST"]
-    allowed_headers    = ["*"]
-    exposed_headers    = ["*"]
-    max_age_in_seconds = 86400
-  }
+  #cors_rule {
+  #allowed_origins    = ["https://about.noconnor.io"]
+  #allowed_methods    = ["GET", "POST"]
+  #allowed_headers    = ["*"]
+  #exposed_headers    = ["*"]
+  #max_age_in_seconds = 86400
+  #}
 }
 
 resource "azurerm_cosmosdb_sql_database" "db" {
