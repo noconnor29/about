@@ -95,7 +95,7 @@ resource "azapi_update_resource" "configure_static_site" {
 }
 
 resource "github_actions_secret" "static_site_token" {
-  repository      = var.github_repo_name
+  repository      = basename(var.github_repo_url)
   secret_name     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
   encrypted_value = azurerm_static_site.static_site.api_key
 }

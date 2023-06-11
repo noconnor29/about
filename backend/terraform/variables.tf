@@ -39,11 +39,6 @@ variable "github_repo_url" {
   type        = string
 }
 
-# variable "github_repo_name" {
-#   description = "Name of the GitHub repository to deploy"
-#   type        = string
-# }
-
 variable "cloudflare_api_token" {
   description = "API token for Cloudflare authentication"
   type        = string
