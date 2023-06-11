@@ -39,6 +39,11 @@ variable "github_repo_url" {
   type        = string
 }
 
+variable "github_token" {
+  description = "Token allowing Terraform to update the GitHub repository"
+  type        = string
+}
+
 variable "cloudflare_api_token" {
   description = "API token for Cloudflare authentication"
   type        = string
