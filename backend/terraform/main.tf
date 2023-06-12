@@ -28,6 +28,11 @@ terraform {
       source  = "integrations/github"
       version = "~> 5.0"
     }
+
+    http-full = {
+      source  = "salrashid123/http-full"
+      version = "1.3.1"
+    }
   }
 }
 
@@ -53,6 +58,13 @@ provider "cloudflare" {
 
 provider "github" {
   token = var.github_token
+}
+
+provider "http-full" {}
+
+## Define locals
+locals {
+  github_repo_name = basename(var.github_repo_url)
 }
 
 ## Create resources
@@ -81,6 +93,12 @@ resource "azurerm_static_site" "static_site" {
   #enterprise_grade_cdn_status = "Disabled"
 }
 
+resource "github_actions_secret" "static_site_token" {
+  repository      = local.github_repo_name
+  secret_name     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
+  plaintext_value = azurerm_static_site.static_site.api_key
+}
+
 resource "azapi_update_resource" "configure_static_site" {
   type        = "Microsoft.Web/staticSites@2022-03-01"
   resource_id = azurerm_static_site.static_site.id
@@ -102,14 +120,34 @@ resource "azapi_update_resource" "configure_static_site" {
   depends_on = [github_actions_secret.static_site_token]
 }
 
-output "debug" {
-  value = nonsensitive(azurerm_static_site.static_site.api_key)
+# resource "github_actions_workflow_dispatch" "trigger_gh_action_web_app_deploy" {
+#   repository  = local.github_repo_name
+#   workflow_id = "5247864617"
+#   ref         = "main"
+# }
+
+data "http" "trigger_gh_action" {
+  provider = http-full
+  url      = "https://api.github.com/repos/${var.github_owner}/${local.github_repo_name}/actions/workflows/${var.github_workflow_webapp}/dispatches"
+  method   = "POST"
+  request_headers = {
+    "Accept"               = "application/vnd.github+json"
+    "X-GitHub-Api-Version" = "2022-11-28"
+    "Authorization"        = "Bearer ${var.github_token}"
+  }
+  request_body = jsonencode({
+    ref = "main",
+    inputs : {}
+  })
 }
 
-resource "github_actions_secret" "static_site_token" {
-  repository      = basename(var.github_repo_url)
-  secret_name     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
-  plaintext_value = azurerm_static_site.static_site.api_key
+output "debug" {
+  value     = "https://api.github.com/repos/${var.github_owner}/${local.github_repo_name}/actions/workflows/${var.github_workflow_webapp}/dispatches"
+  sensitive = false
+}
+
+output "debug1" {
+  value = nonsensitive(azurerm_static_site.static_site.api_key)
 }
 
 # Create a DNS record for the site

@@ -44,6 +44,17 @@ variable "github_token" {
   type        = string
 }
 
+variable "github_owner" {
+  description = "Owner of the GitHub repository to deploy"
+  type        = string
+}
+
+variable "github_workflow_webapp" {
+  description = "Name of GitHub Actions workflow to deploy Web App content"
+  type        = string
+}
+
+
 variable "cloudflare_api_token" {
   description = "API token for Cloudflare authentication"
   type        = string
