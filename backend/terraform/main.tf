@@ -139,6 +139,7 @@ data "http" "trigger_gh_action" {
     ref = "main",
     inputs : {}
   })
+  depends_on = [azapi_update_resource.configure_static_site]
 }
 
 output "debug" {
