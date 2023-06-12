@@ -103,7 +103,7 @@ resource "azapi_update_resource" "configure_static_site" {
 }
 
 output "debug" {
-  value = basename(var.github_repo_url)
+  value     = basename(var.github_repo_url)
   sensitive = false
 }
 
