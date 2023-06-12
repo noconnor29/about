@@ -64,7 +64,8 @@ provider "http-full" {}
 
 ## Define locals
 locals {
-  github_repo_name = basename(var.github_repo_url)
+  github_repo_name  = basename(var.github_repo_url)
+  github_action_url = "https://api.github.com/repos/${var.github_owner}/${local.github_repo_name}/actions/workflows/${var.github_workflow_webapp}/dispatches"
 }
 
 ## Create resources
@@ -128,7 +129,7 @@ resource "azapi_update_resource" "configure_static_site" {
 
 data "http" "trigger_gh_action" {
   provider = http-full
-  url      = "https://api.github.com/repos/${var.github_owner}/${local.github_repo_name}/actions/workflows/${var.github_workflow_webapp}/dispatches"
+  url      = local.github_action_url
   method   = "POST"
   request_headers = {
     "Accept"               = "application/vnd.github+json"
@@ -140,11 +141,6 @@ data "http" "trigger_gh_action" {
     inputs : {}
   })
   depends_on = [azapi_update_resource.configure_static_site]
-}
-
-output "debug" {
-  value     = "https://api.github.com/repos/${var.github_owner}/${local.github_repo_name}/actions/workflows/${var.github_workflow_webapp}/dispatches"
-  sensitive = false
 }
 
 output "debug1" {
