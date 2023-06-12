@@ -103,11 +103,6 @@ resource "azapi_update_resource" "configure_static_site" {
 }
 
 output "debug" {
-  value     = basename(var.github_repo_url)
-  sensitive = false
-}
-
-output "debug1" {
   value = nonsensitive(azurerm_static_site.static_site.api_key)
 }
 
