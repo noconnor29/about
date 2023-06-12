@@ -12,8 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  build:
+    name: 'Build Environment'
     runs-on: ubuntu-latest
     environment: production
 
@@ -55,7 +55,7 @@ jobs:
   deploy_azure_static_web_app:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: 'Deploy Web App'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -73,7 +73,7 @@ jobs:
           #api_location: "/backend/api" # Api source code path - optional
           #output_location: "" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
-    needs: terraform
+    needs: build
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
