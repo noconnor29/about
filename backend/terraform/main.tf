@@ -9,23 +9,33 @@ terraform {
   }
 
   required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 3.0"
+
+    azapi = {
+      source  = "azure/azapi"
+      version = "~> 1.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 2.0"
     }
-    azapi = {
-      source  = "azure/azapi"
-      version = "~> 1.0"
+
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 3.0"
+    }
+
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.0"
     }
   }
 }
 
-provider "cloudflare" {
-  api_token = var.cloudflare_api_token
+provider "azapi" {
+  subscription_id = var.azure_subscription_id
+  tenant_id       = var.azure_subscription_tenant_id
+  client_id       = var.service_principal_appid
+  client_secret   = var.service_principal_password
 }
 
 provider "azurerm" {
@@ -37,11 +47,8 @@ provider "azurerm" {
   client_secret   = var.service_principal_password
 }
 
-provider "azapi" {
-  subscription_id = var.azure_subscription_id
-  tenant_id       = var.azure_subscription_tenant_id
-  client_id       = var.service_principal_appid
-  client_secret   = var.service_principal_password
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
 
 provider "github" {
@@ -92,12 +99,22 @@ resource "azapi_update_resource" "configure_static_site" {
       repositoryUrl = var.github_repo_url
     }
   })
+  depends_on = [github_actions_secret.static_site_token]
+}
+
+output "debug" {
+  value = basename(var.github_repo_url)
+  sensitive = false
+}
+
+output "debug1" {
+  value = nonsensitive(azurerm_static_site.static_site.api_key)
 }
 
 resource "github_actions_secret" "static_site_token" {
   repository      = basename(var.github_repo_url)
   secret_name     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
-  encrypted_value = azurerm_static_site.static_site.api_key
+  plaintext_value = azurerm_static_site.static_site.api_key
 }
 
 # Create a DNS record for the site

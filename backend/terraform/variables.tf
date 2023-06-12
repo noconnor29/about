@@ -40,7 +40,7 @@ variable "github_repo_url" {
 }
 
 variable "github_token" {
-  description = "Token allowing Terraform to update the GitHub repository"
+  description = "Token allowing updates to the GitHub repository"
   type        = string
 }
 
@@ -73,6 +73,3 @@ variable "service_principal_password" {
   type        = string
   sensitive   = true
 }
-
-#variable "github_token" {}
-#variable "github_owner" {}
