@@ -84,8 +84,8 @@ resource "azurerm_static_site" "static_site" {
   sku_size            = "Free"
 
   identity {
-    type = SystemAssigned
-    # identity_ids = [ var.service_principal_appid ]
+    type         = SystemAssigned
+    identity_ids = [var.service_principal_appid]
   }
 
   #staging_environment_policy = "Enabled"
