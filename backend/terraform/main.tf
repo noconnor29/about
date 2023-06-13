@@ -84,8 +84,8 @@ resource "azurerm_static_site" "static_site" {
   sku_size            = "Free"
 
   identity {
-   type = SystemAssigned
-  # identity_ids = [ var.service_principal_appid ]
+    type = SystemAssigned
+    # identity_ids = [ var.service_principal_appid ]
   }
 
   #staging_environment_policy = "Enabled"
@@ -211,7 +211,7 @@ resource "azurerm_cosmosdb_sql_container" "container" {
   account_name        = azurerm_cosmosdb_account.cdb.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
   partition_key_path  = "/id"
-  default_ttl = -1
+  default_ttl         = -1
 }
 
 # Output the endpoint URL of the CDB
