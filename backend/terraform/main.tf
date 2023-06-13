@@ -83,10 +83,10 @@ resource "azurerm_static_site" "static_site" {
   sku_tier            = "Free"
   sku_size            = "Free"
 
-  identity {
-    type         = SystemAssigned
-    identity_ids = [var.service_principal_appid]
-  }
+  #identity {
+  #  type         = SystemAssigned
+  #   identity_ids = [var.service_principal_appid]
+  #}
 
   #staging_environment_policy = "Enabled"
   #allow_config_file_updates  = true
@@ -135,6 +135,10 @@ data "http" "trigger_gh_action" {
     inputs : {}
   })
   depends_on = [azapi_update_resource.configure_static_site]
+}
+
+output "debug1" {
+  value = nonsensitive(azurerm_static_site.static_site.api_key)
 }
 
 # Create a DNS record for the site
