@@ -137,10 +137,6 @@ data "http" "trigger_gh_action" {
   depends_on = [azapi_update_resource.configure_static_site]
 }
 
-output "debug1" {
-  value = nonsensitive(azurerm_static_site.static_site.api_key)
-}
-
 # Create a DNS record for the site
 resource "cloudflare_record" "dns_about_noconnor_io" {
   name       = var.subdomain
