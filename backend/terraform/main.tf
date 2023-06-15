@@ -107,7 +107,7 @@ resource "azapi_update_resource" "configure_static_site" {
     properties = {
       branch = "main"
       buildProperties = {
-        #apiLocation = "/backend/api"
+        apiLocation                        = "/backend/api"
         appLocation                        = "/frontend"
         githubActionSecretNameOverride     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
         skipGithubActionWorkflowGeneration = true
@@ -120,12 +120,6 @@ resource "azapi_update_resource" "configure_static_site" {
   })
   depends_on = [github_actions_secret.static_site_token]
 }
-
-# resource "github_actions_workflow_dispatch" "trigger_gh_action_web_app_deploy" {
-#   repository  = local.github_repo_name
-#   workflow_id = "5247864617"
-#   ref         = "main"
-# }
 
 data "http" "trigger_gh_action" {
   provider = http-full
@@ -141,10 +135,6 @@ data "http" "trigger_gh_action" {
     inputs : {}
   })
   depends_on = [azapi_update_resource.configure_static_site]
-}
-
-output "debug1" {
-  value = nonsensitive(azurerm_static_site.static_site.api_key)
 }
 
 # Create a DNS record for the site
