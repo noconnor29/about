@@ -107,7 +107,7 @@ resource "azapi_update_resource" "configure_static_site" {
     properties = {
       branch = "main"
       buildProperties = {
-        #apiLocation = "/backend/api"
+        apiLocation = "/backend/api"
         appLocation                        = "/frontend"
         githubActionSecretNameOverride     = "AZURE_STATIC_WEB_APPS_API_TOKEN"
         skipGithubActionWorkflowGeneration = true
