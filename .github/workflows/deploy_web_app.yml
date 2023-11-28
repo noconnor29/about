@@ -1,4 +1,4 @@
-name: 'Deploy Web App 2'
+name: 'Deploy Web App'
 
 on:
   workflow_dispatch:
@@ -7,8 +7,9 @@ on:
         - noconnor29
 jobs:
   deploy_azure_static_web_app:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: 'Deploy Web App 2'
+    name: 'Deploy Web App'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,6 +25,6 @@ jobs:
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "/frontend" # App source code path
-          api_location: "/backend/api" # Api source code path - optional
+          #api_location: "/backend/api" # Api source code path - optional
           #output_location: "" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
