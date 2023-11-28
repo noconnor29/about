@@ -121,19 +121,22 @@ resource "azapi_update_resource" "configure_static_site" {
   depends_on = [github_actions_secret.static_site_token]
 }
 
-data "http" "trigger_gh_action" {
-  provider = http-full
-  url      = local.github_action_url
-  method   = "POST"
-  request_headers = {
-    "Accept"               = "application/vnd.github+json"
-    "X-GitHub-Api-Version" = "2022-11-28"
-    "Authorization"        = "Bearer ${var.github_token}"
+resource "null_resource" "trigger_gh_action" {
+  triggers = {
+    always_run = timestamp()
   }
-  request_body = jsonencode({
-    ref = "main",
-    inputs : {}
-  })
+
+  provisioner "local-exec" {
+    command = <<EOF
+    curl -X POST \
+      -H "Accept: application/vnd.github+json" \
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      -H "Authorization: Bearer ${var.github_token}" \
+      -d '{"ref":"main","inputs":{}}' \
+      ${local.github_action_url}
+    EOF
+  }
+
   depends_on = [azapi_update_resource.configure_static_site]
 }
 
