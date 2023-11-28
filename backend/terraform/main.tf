@@ -60,8 +60,6 @@ provider "github" {
   token = var.github_token
 }
 
-provider "http-full" {}
-
 ## Define locals
 locals {
   github_repo_name  = basename(var.github_repo_url)
@@ -121,6 +119,7 @@ resource "azapi_update_resource" "configure_static_site" {
   depends_on = [github_actions_secret.static_site_token]
 }
 
+# Trigger the GitHub Action to build the site
 resource "null_resource" "trigger_gh_action" {
   triggers = {
     always_run = timestamp()

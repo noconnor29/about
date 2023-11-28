@@ -27,3 +27,4 @@ jobs:
           #api_location: "/backend/api" # Api source code path - optional
           #output_location: "" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+    #needs: build
