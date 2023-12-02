@@ -1,3 +1,6 @@
+# need to add testing/linting
+# figure out testing without repeat push/deploys
+
 import logging
 import os
 import azure.functions as azfunc
