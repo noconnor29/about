@@ -1,16 +1,13 @@
 variable "domain" {
   type    = string
-  default = "noconnor.io"
 }
 
 variable "subdomain" {
   type    = string
-  default = "about"
 }
 
-variable "zone_id" {
+variable "cloudflare_zone_id" {
   type    = string
-  default = "695e898dffb5370b3e32e67bb903272e"
 }
 
 variable "ttl" {
@@ -83,4 +80,9 @@ variable "service_principal_password" {
   description = "Service Principal Password"
   type        = string
   sensitive   = true
+}
+
+variable "cosmosdb_name" {
+  description = "Name of the CosmosDB instance"
+  type        = string
 }

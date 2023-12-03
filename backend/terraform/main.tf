@@ -3,9 +3,9 @@ terraform {
     hostname     = "app.terraform.io"
     organization = "NODV"
 
-    workspaces {
-      name = "cloud-resume"
-    }
+    # workspaces {
+    #   name = "cloud-resume"
+    # }
   }
 
   required_providers {
@@ -103,6 +103,7 @@ resource "azapi_update_resource" "configure_static_site" {
   resource_id = azurerm_static_site.static_site.id
   body = jsonencode({
     properties = {
+      # this branch should be a variable by environment
       branch = "main"
       buildProperties = {
         apiLocation                        = "/backend/api"
@@ -147,11 +148,11 @@ resource "cloudflare_record" "dns_about_noconnor_io" {
   ttl        = var.ttl
   type       = "CNAME"
   value      = azurerm_static_site.static_site.default_host_name
-  zone_id    = "695e898dffb5370b3e32e67bb903272e"
+  zone_id    = var.cloudflare_zone_id
   depends_on = [azurerm_static_site.static_site]
 }
 
-resource "azurerm_static_site_custom_domain" "about" {
+resource "azurerm_static_site_custom_domain" "azure_static_site" {
   static_site_id  = azurerm_static_site.static_site.id
   domain_name     = "${var.subdomain}.${var.domain}"
   validation_type = "cname-delegation"
@@ -165,9 +166,9 @@ output "static_site_endpoint" {
 
 # Create CosmosDB to track site visits
 resource "azurerm_cosmosdb_account" "cdb" {
-  name                = "cdb-resume-dev"
+  name                = var.cosmosdb_name
   location            = azurerm_resource_group.rg.location
-  resource_group_name = "rg-resume-dev"
+  resource_group_name = var.resource_group_name
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
   backup {
@@ -203,13 +204,13 @@ resource "azurerm_cosmosdb_account" "cdb" {
 
 resource "azurerm_cosmosdb_sql_database" "db" {
   name                = "db"
-  resource_group_name = "rg-resume-dev"
+  resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.cdb.name
 }
 
 resource "azurerm_cosmosdb_sql_container" "container" {
   name                = "visitorCount"
-  resource_group_name = "rg-resume-dev"
+  resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.cdb.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
   partition_key_path  = "/id"

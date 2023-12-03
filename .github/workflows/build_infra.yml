@@ -2,7 +2,7 @@ name: 'Build Infrastructure'
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "*" ]
     paths-ignore:
       - '.gitignore'
       - 'README.md'
@@ -17,11 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
         working-directory: ./backend/terraform
+
+    env:
+      TEST_WORKSPACE: 'test'
+      PROD_WORKSPACE: 'production'
+
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -48,13 +52,22 @@ jobs:
       env:
         TF_INPUT: false
 
-    # On push to "main", build or change infrastructure according to Terraform configuration files
-    # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
+    # On push to any branch other than "main", apply changes to Test environment
+    - name: Terraform Apply to Test Environment
+      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        # Add your deployment commands for the test environment here
+      env:
+        TF_INPUT: false
+        TF_WORKSPACE: ${{ env.TEST_WORKSPACE }}
+
+    # On push to "main", apply changes to Prod environment
+    - name: Terraform Apply to Prod Environment
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
       env:
         TF_INPUT: false
+        TF_WORKSPACE: ${{ env.PROD_WORKSPACE }}
         
   close_pull_request_job:
     name: 'Close Pull Request Job'
