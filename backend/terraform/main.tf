@@ -4,7 +4,7 @@ terraform {
     organization = "NODV"
 
     workspaces {
-      tags = "cloud-resume"
+      tags = ["cloud-resume"]
     }
   }
 
