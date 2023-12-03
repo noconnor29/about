@@ -38,3 +38,4 @@ The deployment of this project is automated using GitHub Actions. Whenever chang
 - complete work on visitor counter function (javascript, python API, CosmosDB)
 - document the project!
 - get some cool icons for this readme
+- revisit downloadable resume file
