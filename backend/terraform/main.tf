@@ -3,9 +3,9 @@ terraform {
     hostname     = "app.terraform.io"
     organization = "NODV"
 
-    # workspaces {
-    #   name = "cloud-resume"
-    # }
+    workspaces {
+      tags = "cloud-resume"
+    }
   }
 
   required_providers {
