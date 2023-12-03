@@ -25,6 +25,7 @@ jobs:
     env:
       TEST_WORKSPACE: 'test'
       PROD_WORKSPACE: 'production'
+      TF_WORKSPACE: ${{ env.TEST_WORKSPACE }} # Default to test workspace
 
 
     steps:
