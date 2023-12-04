@@ -58,6 +58,7 @@ jobs:
       timeout-minutes: 10
       env:
         TF_INPUT: false
+        TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
 
     # On push to any branch other than "main", apply changes to Test environment
     - name: Terraform Apply to Test Environment
