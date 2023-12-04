@@ -23,10 +23,9 @@ jobs:
         working-directory: ./backend/terraform
 
     env:
-      TEST_WORKSPACE: 'test'
-      PROD_WORKSPACE: 'production'
-      TF_WORKSPACE: 'test' # Default to test workspace
-
+      TEST_WORKSPACE: ${{ env.TEST_WORKSPACE }}
+      PROD_WORKSPACE: ${{ env.PROD_WORKSPACE }}
+      TF_WORKSPACE: ${{ env.TEST_WORKSPACE }} # Default to test workspace
 
     steps:
     # Checkout the repository to the GitHub Actions runner
