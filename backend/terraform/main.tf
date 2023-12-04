@@ -8,6 +8,7 @@ terraform {
     }
   }
 
+# Delete this.
   required_providers {
 
     azapi = {
