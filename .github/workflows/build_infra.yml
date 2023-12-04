@@ -22,15 +22,19 @@ jobs:
         shell: bash
         working-directory: ./backend/terraform
 
-    env:
-      TEST_WORKSPACE: ${{ env.TEST_WORKSPACE }}
-      PROD_WORKSPACE: ${{ env.PROD_WORKSPACE }}
-      TF_WORKSPACE: ${{ env.TEST_WORKSPACE }} # Default to test workspace
-
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+
+    # Set TF_WORKSPACE environment variable
+    - name: Set TF_WORKSPACE (test)
+      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      run: echo "TF_WORKSPACE=${{ env.TEST_WORKSPACE }}" >> $GITHUB_ENV
+
+    - name: Set TF_WORKSPACE (prod)
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: echo "TF_WORKSPACE=${{ env.PROD_WORKSPACE }}" >> $GITHUB_ENV
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
