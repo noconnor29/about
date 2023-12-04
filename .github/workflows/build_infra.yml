@@ -30,7 +30,7 @@ jobs:
     # Set TF_WORKSPACE environment variable
     - name: Set TF_WORKSPACE
       run: |
-        if [[ github.ref == 'refs/heads/main' ]]; then
+        if [[ "${{ github.ref }}" == 'refs/heads/main' ]]; then
           echo "TF_WORKSPACE=${{ vars.PROD_WORKSPACE }}" >> $GITHUB_ENV
         else
           echo "TF_WORKSPACE=${{ vars.TEST_WORKSPACE }}" >> $GITHUB_ENV
