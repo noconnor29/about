@@ -36,9 +36,6 @@ jobs:
           echo "TF_WORKSPACE=${{ secrets.TEST_WORKSPACE }}" >> $GITHUB_ENV
         fi
 
-    - name: Echo TF_WORKSPACE
-      run: echo $TF_WORKSPACE
-
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
