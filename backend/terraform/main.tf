@@ -8,8 +8,6 @@ terraform {
     }
   }
 
-# Test edit. Delete.
-
   required_providers {
 
     azapi = {
