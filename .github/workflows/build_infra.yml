@@ -15,7 +15,7 @@ jobs:
   build:
     name: 'Build Environment'
     runs-on: ubuntu-latest
-    environment: production
+    #environment: production
 
     defaults:
       run:
@@ -31,9 +31,9 @@ jobs:
     - name: Set TF_WORKSPACE
       run: |
         if [[ github.ref == 'refs/heads/main' ]]; then
-          echo "TF_WORKSPACE=${{ secrets.PROD_WORKSPACE }}" >> $GITHUB_ENV
+          echo "TF_WORKSPACE=${{ vars.PROD_WORKSPACE }}" >> $GITHUB_ENV
         else
-          echo "TF_WORKSPACE=${{ secrets.TEST_WORKSPACE }}" >> $GITHUB_ENV
+          echo "TF_WORKSPACE=${{ vars.TEST_WORKSPACE }}" >> $GITHUB_ENV
         fi
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
@@ -66,7 +66,7 @@ jobs:
         # Add your deployment commands for the test environment here
       env:
         TF_INPUT: false
-        TF_WORKSPACE: ${{ env.TEST_WORKSPACE }}
+        TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
 
     # On push to "main", apply changes to Prod environment
     - name: Terraform Apply to Prod Environment
@@ -74,7 +74,7 @@ jobs:
       run: terraform apply -auto-approve
       env:
         TF_INPUT: false
-        TF_WORKSPACE: ${{ env.PROD_WORKSPACE }}
+        TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
         
   close_pull_request_job:
     name: 'Close Pull Request Job'
