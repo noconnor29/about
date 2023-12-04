@@ -7,7 +7,7 @@ terraform {
       tags = ["cloud-resume"]
     }
   }
-
+#Delete later
   required_providers {
     azapi = {
       source  = "azure/azapi"
