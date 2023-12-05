@@ -183,7 +183,7 @@ resource "azurerm_cosmosdb_account" "cdb" {
   geo_location {
     location          = azurerm_resource_group.rg.location
     failover_priority = 0
-    zone_redundant    = true
+    zone_redundant    = false
   }
   consistency_policy {
     consistency_level = "Eventual"
