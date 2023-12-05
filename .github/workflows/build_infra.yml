@@ -62,7 +62,7 @@ jobs:
 
     # On push to any branch other than "main", apply changes to Test environment
     - name: Terraform Apply to Test Environment
-      if: github.ref != 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/gh-pages' && github.event_name == 'push'
       run: terraform apply -auto-approve
       env:
         TF_INPUT: false
