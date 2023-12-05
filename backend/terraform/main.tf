@@ -43,7 +43,11 @@ provider "azapi" {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
   # https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash
   subscription_id = var.azure_subscription_id
   tenant_id       = var.azure_subscription_tenant_id
