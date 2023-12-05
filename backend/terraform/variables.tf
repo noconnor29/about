@@ -27,7 +27,6 @@ variable "resource_group_name" {
 
 variable "az_region" {
   description = "Azure region where resources will be deployed"
-  default     = "westus2" #eastus2
   type        = string
 }
 
