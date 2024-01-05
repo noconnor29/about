@@ -15,7 +15,9 @@ jobs:
   build:
     name: 'Build Environment'
     runs-on: ubuntu-latest
-    #environment: production
+    # Set environment based on branch
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
 
     defaults:
       run:
