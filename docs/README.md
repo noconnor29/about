@@ -40,7 +40,7 @@ Several choices were also bourne out of familiarity. I already use Cloudflare fo
 
 ## Security
 
-So I'm a security engineer. What security controls are in place here? Well, like any good security implementation, the security is baked in from the start and are present at many levels. But this is also a public site and doesn't host any critical data or processing so a measured approach is warrented.
+So I'm a security engineer. What security controls are in place here? Well, like any good security implementation, the security is baked in from the start and are present at many levels. But this is also a public site and doesn't host any critical data or processing so a measured approach is warranted.
 
 - All credentials are scoped as closely as possible. The Cloudflare credentials can only control the relevant domain. Azure assets are split into production and test subscriptions and have service principals unique to each environment.
 - Variables are shared to prevent drift. Secrets are encrypted and managed within their respective environments.
