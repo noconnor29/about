@@ -24,7 +24,7 @@ The [Cloud Resume Challenge](https://cloudresumechallenge.dev/docs/the-challenge
 
 ## Features
 
-- **Interactive Resume**: A dynamic and user-friendly web page showcasing my skills, experience, and projects.
+- **Interactive Resume**: A dynamic and user-friendly web page showcasing my skills, experience, and projects. Now with downloadable PDF version!
 - **Cloud Integration**: Demonstrates the use of cloud services to host and deploy the site.
 - **Continuous Integration/Continuous Deployment (CI/CD)**: Utilizes CI/CD pipelines for automated testing, building, and deployment.
 - **Responsive Design**: Ensures a seamless experience across various devices and screen sizes.
@@ -38,4 +38,3 @@ The deployment of this project is automated using GitHub Actions. Whenever chang
 - complete work on visitor counter function (javascript, python API, CosmosDB)
 - document the project!
 - get some cool icons for this readme
-- revisit downloadable resume file
