@@ -45,6 +45,7 @@ provider "azapi" {
 
 provider "azurerm" {
   features {
+    skip_provider_registration = true
     resource_group {
       prevent_deletion_if_contains_resources = false
     }
