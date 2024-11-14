@@ -45,11 +45,12 @@ provider "azapi" {
 
 provider "azurerm" {
   features {
-    skip_provider_registration = true
     resource_group {
       prevent_deletion_if_contains_resources = false
     }
   }
+  skip_provider_registration = true
+
   # https://learn.microsoft.com/en-us/azure/developer/terraform/authenticate-to-azure?tabs=bash
   subscription_id = var.azure_subscription_id
   tenant_id       = var.azure_subscription_tenant_id
