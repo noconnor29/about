@@ -191,8 +191,8 @@ resource "azurerm_cosmosdb_account" "cdb" {
   consistency_policy {
     consistency_level = "Eventual"
   }
-  enable_automatic_failover         = true
-  enable_multiple_write_locations   = false
+  automatic_failover_enabled       = true
+  multiple_write_locations_enabled = false
   is_virtual_network_filter_enabled = false
   public_network_access_enabled     = true
 
@@ -219,7 +219,7 @@ resource "azurerm_cosmosdb_sql_container" "container" {
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.cdb.name
   database_name       = azurerm_cosmosdb_sql_database.db.name
-  partition_key_path  = "/id"
+  partition_key_paths = ["/id"]
   default_ttl         = -1
 }
 
