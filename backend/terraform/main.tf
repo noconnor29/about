@@ -191,8 +191,8 @@ resource "azurerm_cosmosdb_account" "cdb" {
   consistency_policy {
     consistency_level = "Eventual"
   }
-  automatic_failover_enabled       = true
-  multiple_write_locations_enabled = false
+  automatic_failover_enabled        = true
+  multiple_write_locations_enabled  = false
   is_virtual_network_filter_enabled = false
   public_network_access_enabled     = true
 
